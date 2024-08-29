@@ -6,7 +6,6 @@ from transformers import (
 )
 from transformers.modeling_outputs import SequenceClassifierOutput
 import torch.nn as nn
-from typing import Dict, Union
 import torch
 
 
