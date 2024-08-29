@@ -6,6 +6,7 @@ from transformers import (
 )
 import torch.nn as nn
 from typing import Dict, Union
+import torch
 
 
 class NewsClassificationModel(nn.Module):
@@ -77,3 +78,4 @@ def get_model(model_name: str, num_labels: int) -> NewsClassificationModel:
         NewsClassificationModel: An instance of the NewsClassificationModel.
     """
     return NewsClassificationModel(model_name, num_labels)
+
