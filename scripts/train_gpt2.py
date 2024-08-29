@@ -30,7 +30,9 @@ def main():
     os.makedirs(args.output_dir, exist_ok=True)
 
     tokenizer = NewsTokenizer(GPT2Tokenizer, args.model_name)
+    tokenizer.tokenizer.pad_token = tokenizer.tokenizer.eos_token
     model = get_model(args.model_name, args.num_labels)
+    model.model.config.pad_token_id = model.model.config.eos_token_id
 
     train_dataset = get_dataset(args.dataset_name, split='train', tokenizer=tokenizer)
     test_dataset = get_dataset(args.dataset_name, split='test', tokenizer=tokenizer)
