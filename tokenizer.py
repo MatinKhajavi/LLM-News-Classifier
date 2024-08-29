@@ -47,19 +47,25 @@ class NewsTokenizer:
         """
         return torch.nn.utils.rnn.pad_sequence([torch.tensor(seq) for seq in batch], batch_first=True)
 
-    def collate_fn(self, batch: List[Dict[str, Union[str, int]]]) -> Dict[str, torch.Tensor]:
+    def collate_fn(self, batch: List[Dict[str, Union[str, int, Dict[str, List[int]]]]]) -> Dict[str, torch.Tensor]:
         """
         Collate function for DataLoader.
         
         Args:
-            batch (List[Dict[str, Union[str, int]]]): Batch of data.
+            batch (List[Dict[str, Union[str, int, Dict[str, List[int]]]]]): Batch of data.
         
         Returns:
             Dict[str, torch.Tensor]: Collated batch with padded sequences and labels.
         """
-        texts, labels = zip(*[(item['text'], item['label']) for item in batch])
+        texts_or_encodings, labels = zip(*[(item['text'], item['label']) for item in batch])
         
-        encodings = self.tokenize_and_truncate(texts)
+        if isinstance(texts_or_encodings[0], dict): 
+            encodings = {
+                'input_ids': [item['input_ids'] for item in texts_or_encodings],
+                'attention_mask': [item['attention_mask'] for item in texts_or_encodings]
+            }
+        else:  
+            encodings = self.tokenize_and_truncate(texts_or_encodings)
         
         return {
             'input_ids': self.pad_sequences(encodings['input_ids']),
@@ -67,23 +73,43 @@ class NewsTokenizer:
             'labels': torch.tensor(labels)
         }
 
+    def pre_tokenize_dataset(self, dataset: Dataset) -> Dataset:
+        """
+        Pre-tokenize a dataset.
+        
+        Args:
+            dataset (Dataset): Input dataset with 'text' field.
+        
+        Returns:
+            Dataset: Dataset with tokenized 'text' field.
+        """
+        def tokenize_function(examples):
+            return self.tokenize_and_truncate(examples['text'])
+        
+        return dataset.map(tokenize_function, batched=True)
 
-def get_dataset(dataset_name: str, split: str = 'train') -> Dataset:
+def get_dataset(dataset_name: str, split: str = 'train', tokenizer: NewsTokenizer = None) -> Dataset:
     """
-    Load a dataset from Hugging Face.
+    Load a dataset from Hugging Face and optionally pre-tokenize it.
     
     Args:
         dataset_name (str): Name of the dataset on Hugging Face.
         split (str): Split of the dataset to load (e.g., 'train', 'test').
+        tokenizer (NewsTokenizer, optional): Tokenizer to use for pre-tokenizing. If None, no pre-tokenization is performed.
     
     Returns:
-        datasets.Dataset: Loaded dataset.
+        datasets.Dataset: Loaded dataset, optionally pre-tokenized.
 
     Raises:
         ValueError: If the dataset or split cannot be loaded.
     """
     try:
-        return load_dataset(dataset_name, split=split)
+        dataset = load_dataset(dataset_name, split=split)
+        
+        if tokenizer:
+            dataset = tokenizer.pre_tokenize_dataset(dataset)
+        
+        return dataset
     except Exception as e:
         raise ValueError(f"Failed to load dataset '{dataset_name}' with split '{split}': {str(e)}")
 
