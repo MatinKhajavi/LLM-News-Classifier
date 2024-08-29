@@ -11,7 +11,7 @@ A flexible framework for fine-tuning BERT, GPT-2, and other Large Language Model
 
 ## Results
 
-We compared the performance of DistilBERT and GPT-2 models on the AG News classification task. Here are the results:
+We compared the performance of DistilBERT and GPT-2 models on the AG News classification task using their default parameters. Here are the results:
 
 ### Performance Comparison Table
 
@@ -26,9 +26,9 @@ We compared the performance of DistilBERT and GPT-2 models on the AG News classi
 
 ![Model Performance Comparison](results/fig.png)
 
-The table and chart above show the comparative performance of GPT-2 and DistilBERT models across different metrics. The 'Difference' column in the table represents GPT-2's performance minus DistilBERT's performance.
+The table and chart above show the comparative performance of GPT-2 and DistilBERT models across different metrics, using their default parameters. The 'Difference' column in the table represents GPT-2's performance minus DistilBERT's performance.
 
-The chart provides a visual representation of the performance metrics, allowing for easy comparison between the two models. For more detailed analysis, please refer to the analysis notebooks in the repository.
+The chart provides a visual representation of the performance metrics, allowing for easy comparison between the two models. For more detailed analysis or to explore the effects of different hyperparameters, please refer to the analysis notebooks in the repository.
 
 ## Data
 
