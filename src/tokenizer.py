@@ -47,25 +47,26 @@ class NewsTokenizer:
         """
         return torch.nn.utils.rnn.pad_sequence([torch.tensor(seq) for seq in batch], batch_first=True)
 
-    def collate_fn(self, batch: List[Dict[str, Union[str, int, Dict[str, List[int]]]]]) -> Dict[str, torch.Tensor]:
+    def collate_fn(self, batch: List[Dict[str, Union[str, int, List[int]]]]) -> Dict[str, torch.Tensor]:
         """
         Collate function for DataLoader.
         
         Args:
-            batch (List[Dict[str, Union[str, int, Dict[str, List[int]]]]]): Batch of data.
+            batch (List[Dict[str, Union[str, int, List[int]]]]): Batch of data.
         
         Returns:
             Dict[str, torch.Tensor]: Collated batch with padded sequences and labels.
         """
-        texts_or_encodings, labels = zip(*[(item['text'], item['label']) for item in batch])
         
-        if isinstance(texts_or_encodings[0], dict): 
+        if 'text' in batch[0]:
+            texts, labels = zip(*[(item['text'], item['label']) for item in batch])
+            encodings = self.tokenize_and_truncate(texts)
+        else:
             encodings = {
-                'input_ids': [item['input_ids'] for item in texts_or_encodings],
-                'attention_mask': [item['attention_mask'] for item in texts_or_encodings]
+                'input_ids': [item['input_ids'] for item in batch],
+                'attention_mask': [item['attention_mask'] for item in batch]
             }
-        else:  
-            encodings = self.tokenize_and_truncate(texts_or_encodings)
+            labels = [item['label'] for item in batch]
         
         return {
             'input_ids': self.pad_sequences(encodings['input_ids']),
