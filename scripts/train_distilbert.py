@@ -4,6 +4,7 @@ from src.models import get_model
 from src.tokenizer import NewsTokenizer, get_dataset
 from src.trainer import NewsTrainer
 import torch
+import os
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train a DistilBERT model for news classification")
@@ -19,10 +20,14 @@ def parse_args():
     parser.add_argument("--logging_steps", type=int, default=100, help="Number of steps between logging intervals")
     parser.add_argument("--evaluation_strategy", type=str, default="epoch", choices=["no", "steps", "epoch"], help="Evaluation strategy")
     parser.add_argument("--save_strategy", type=str, default="epoch", choices=["no", "steps", "epoch"], help="Save strategy")
+    parser.add_argument("--run_name", type=str, default="default", help="Name of the run for output directory")
     return parser.parse_args()
 
 def main():
     args = parse_args()
+
+    args.output_dir = os.path.join(args.output_dir, args.run_name)
+    os.makedirs(args.output_dir, exist_ok=True)
 
     tokenizer = NewsTokenizer(DistilBertTokenizer, args.model_name)
     model = get_model(args.model_name, args.num_labels)
