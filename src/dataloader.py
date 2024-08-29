@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader
 from datasets import Dataset
-from tokenizer import NewsTokenizer, get_dataset
+from src.tokenizer import NewsTokenizer, get_dataset
 import torch
 
 class NewsDataLoader:

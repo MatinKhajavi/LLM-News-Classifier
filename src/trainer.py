@@ -1,7 +1,7 @@
 from transformers import Trainer, TrainingArguments
-from models import NewsClassificationModel
-from tokenizer import NewsTokenizer
-from dataloader import NewsDataLoader
+from src.models import NewsClassificationModel
+from src.tokenizer import NewsTokenizer
+from src.dataloader import NewsDataLoader
 from datasets import Dataset
 from typing import Dict, Union, Optional
 import torch
