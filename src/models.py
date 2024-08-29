@@ -4,6 +4,7 @@ from transformers import (
     BertForSequenceClassification,
     PreTrainedModel
 )
+from transformers.modeling_outputs import SequenceClassifierOutput
 import torch.nn as nn
 from typing import Dict, Union
 import torch
@@ -50,7 +51,7 @@ class NewsClassificationModel(nn.Module):
         else:
             raise ValueError(f"Unsupported model: {model_name}")
 
-    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor, labels: torch.Tensor = None) -> Dict[str, torch.Tensor]:
+    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor, labels: torch.Tensor = None) -> SequenceClassifierOutput:
         """
         Forward pass of the model.
 
@@ -60,7 +61,7 @@ class NewsClassificationModel(nn.Module):
             labels (torch.Tensor, optional): Tensor of true labels for loss computation.
 
         Returns:
-            Dict[str, torch.Tensor]: Dictionary containing model outputs, including loss and logits.
+            SequenceClassifierOutput: Object containing model outputs, including loss and logits.
         """
         outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
         return outputs
