@@ -41,7 +41,7 @@ class NewsTrainer:
             - weight_decay (float): Weight decay for regularization.
             - logging_steps (int): Number of steps between logging intervals.
             - learning_rate (float): Learning rate for optimization.
-            - evaluation_strategy (str): Strategy for evaluation ('no', 'steps', or 'epoch').
+            - eval_strategy (str): Strategy for evaluation ('no', 'steps', or 'epoch').
             - save_strategy (str): Strategy for saving checkpoints ('no', 'steps', or 'epoch').
         """
         self.model = model
@@ -57,7 +57,7 @@ class NewsTrainer:
         self.config.setdefault('weight_decay', 0.01)
         self.config.setdefault('logging_steps', 100)
         self.config.setdefault('learning_rate', 2e-5)
-        self.config.setdefault('evaluation_strategy', 'epoch' if eval_dataset else 'no')
+        self.config.setdefault('eval_strategy', 'epoch' if eval_dataset else 'no')
         self.config.setdefault('save_strategy', 'epoch')
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -75,7 +75,7 @@ class NewsTrainer:
             logging_dir=os.path.join(self.config['output_dir'], 'logs'),
             logging_steps=self.config['logging_steps'],
             learning_rate=self.config['learning_rate'],
-            evaluation_strategy=self.config['evaluation_strategy'],
+            eval_strategy=self.config['eval_strategy'],  # Changed from evaluation_strategy
             save_strategy=self.config['save_strategy'],
             load_best_model_at_end=eval_dataset is not None,
         )
