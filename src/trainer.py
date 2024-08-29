@@ -60,6 +60,11 @@ class NewsTrainer:
         self.config.setdefault('evaluation_strategy', 'epoch' if eval_dataset else 'no')
         self.config.setdefault('save_strategy', 'epoch')
 
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"Using device: {self.device}")
+
+        self.model.to(self.device)
+
         self.training_args = TrainingArguments(
             output_dir=self.config['output_dir'],
             num_train_epochs=self.config['num_train_epochs'],
